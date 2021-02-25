@@ -1,0 +1,15 @@
+[Unit]
+
+Description=Gunicorn instance to serve CrawlerService
+After=network.target
+
+[Service]
+User=nghialv
+Group=www-data
+WorkingDirectory=/home/nghialv/CrawlerService
+Environment="PATH=/home/nghialv/venv/venv/bin"
+
+ExecStart=/home/nghialv/venv/venv/bin/uwsgi --ini CrawlerService.ini
+
+[Install]
+WantedBy=multi-user.target

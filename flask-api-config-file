@@ -1,0 +1,9 @@
+server {
+    listen 8001;
+    server_name _;
+
+    location / {
+        include uwsgi_params;
+        uwsgi_pass unix:/home/nghialv/CrawlerService/CrawlerService.sock;
+    }
+}

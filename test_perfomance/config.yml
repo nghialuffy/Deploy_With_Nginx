@@ -1,0 +1,72 @@
+config:
+  target: URL
+  http: 
+    timeout: 30 # Responses have to be sent within 10 seconds or the request will be aborted
+  processor: "./processor.js"
+
+  phases:
+    # Create 100 virtual users every second for 60 seconds
+    - duration: 60 # seconds
+      arrivalRate: 10 # virtual users
+      name: "Load test - user login - arrival rate"
+
+  payload:
+    # path is relative to the location of the test script
+    path: "credential.csv"
+    fields:
+      - "username"
+      - "password"
+    order: "sequence"
+
+  plugins:
+    expect: {}
+
+scenarios:
+  - name: 'Load test user login & Logout'
+    flow:
+      - post:
+          host: URL
+          FileName: ""
+          url: ""
+          json:
+            userName: "{{ username }}"
+            passWord: "{{ password }}"
+          beforeRequest: parsePropertyToString
+          capture:
+            - json: "$.token"
+              as: token
+          expect:
+            - statusCode: 200
+      - get:
+          url: "/"
+
+
+# config:
+#   target: URL #địa chỉ muốn test
+#   phases: #có thể  khai báo để chạy nhiều phases với thiết lập cụ thể khác nhau 
+#     - duration: 60  #kéo dài trong 60s
+#       arrivalRate: 20 #trung bình 20 user/giây
+#       name: "tên phase 1"
+#     - pause: 60 #phase này sẽ không làm gì (pause) trong 60s
+#     - duration: 
+#       arrivalRate:
+#       name: "tên phase 2"
+# scenarios: #lên kịch bản cho cho từng user
+#   - flow:
+#     - post:
+#         url: "/login"
+#         json:
+#           username: USERNAME
+#           password: PASSWORD
+#         capture:
+#           - json: "$.token"
+#             as: token
+#         expect:
+#           - statusCode: 200
+
+#     - post: 
+#         url: "/logout"
+#         headers:
+#           Authorization: "Bearer {{ token }}"
+#         expect:
+#           - statusCode: 200
